@@ -1,6 +1,7 @@
 
 import './App.css'
 import AverageJourneyTime from './components/AverageJourneyTime'
+import ClassProportion from './components/ClassProportion'
 import DailyDepartures from './components/DailyDepartures'
 
 function App() {
@@ -11,6 +12,7 @@ function App() {
       <div>
         <AverageJourneyTime/>
         <DailyDepartures/>
+        <ClassProportion/>
       </div>
     </>
   )
