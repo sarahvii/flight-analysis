@@ -72,3 +72,4 @@ export default AverageJourneyTime;
 // note: outgoing journeys only
 // todo: update relevant flights to include: incoming flights & segments which include relevant flights
 // todo: change search bar to dropdown list?
+// todo: offset timezones
