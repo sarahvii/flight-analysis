@@ -74,4 +74,4 @@ const FlightsIntoCountry = () => {
 
 export default FlightsIntoCountry;
 
-// todo: replace hardcoded countries with dynamic data
+// todo: add top 10 list?
