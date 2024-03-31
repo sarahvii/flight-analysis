@@ -3,28 +3,49 @@ import airportData from "aircodes";
 
 const FlightsIntoCountry = () => {
   const [selectedCountry, setSelectedCountry] = useState("Sweden");
-  const [percentageOfFlights, setPercentageOfFlights] = useState(null);
-  const countries = ["Sweden", "Australia", "Spain", "United Arab Emirates"];
+  const [flightsData, setFlightData] = useState({
+    countries: [],
+    percentages: [],
+  });
 
   useEffect(() => {
     fetch(`/api/full-flight-details`)
       .then((response) => response.json())
       .then((data) => {
-        const numOfFlights = data.length;
-        // filter flights where destination airport is in selected country
-        const flightsIntoSelectedCountry = data.filter((flight) => {
-          const airport = airportData.getAirportByIata(flight.destair);
-          return airport && airport.country === selectedCountry;
-        }).length;
+        const countryData = {};
 
-        // calculate percentage of flights into selected country
-        const percentage = (flightsIntoSelectedCountry / numOfFlights) * 100;
-        setPercentageOfFlights(percentage.toFixed(2));
+        // group data by country name and count flights in each group
+        data.forEach((flight) => {
+          const airport = airportData.getAirportByIata(flight.destair);
+          if (airport && airport.country) {
+            countryData[airport.country] =
+              (countryData[airport.country] || 0) + 1;
+          }
+        });
+
+        const numOfFlights = data.length;
+
+        // extract all keys from countryData object as an array of strings
+        const countries = Object.keys(countryData);
+
+        const percentages = countries.map((country) => {
+          return ((countryData[country] / numOfFlights) * 100).toFixed(2);
+        });
+
+        setFlightData({
+          countries: countries,
+          percentages: percentages,
+        });
       })
       .catch((error) => {
         console.error("Failed to fetch flight data", error);
       });
-  }, [selectedCountry]);
+  }, []);
+
+  // find index of country to display its percentage
+  const selectedCountryIndex = flightsData.countries.indexOf(selectedCountry);
+  const percentageOfSelectedCountry =
+    flightsData.percentages[selectedCountryIndex] || "0";
 
   const handleCountryChange = (e) => {
     setSelectedCountry(e.target.value);
@@ -32,19 +53,17 @@ const FlightsIntoCountry = () => {
 
   return (
     <div>
-      <h2>
-        Flights into {selectedCountry}
-      </h2>
+      <h2>Flights into {selectedCountry}</h2>
       <select value={selectedCountry} onChange={handleCountryChange}>
-        {countries.map((code) => (
+        {flightsData.countries.map((code) => (
           <option key={code} value={code}>
             {code}
           </option>
         ))}
       </select>
-      {percentageOfFlights !== null ? (
+      {percentageOfSelectedCountry !== null ? (
         <p>
-          {percentageOfFlights}% of flights fly into {selectedCountry}
+          {percentageOfSelectedCountry}% of flights fly into {selectedCountry}
         </p>
       ) : (
         <p>Loading data...</p>
@@ -55,4 +74,4 @@ const FlightsIntoCountry = () => {
 
 export default FlightsIntoCountry;
 
-// todo: replace hardcoded countries wiht dynamic data
+// todo: replace hardcoded countries with dynamic data
