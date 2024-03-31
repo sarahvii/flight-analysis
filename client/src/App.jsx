@@ -7,14 +7,22 @@ import FlightsIntoCountry from "./components/FlightsIntoCountry";
 function App() {
   return (
     <>
-      <div>
+      <div className="header">
         <h1>Travel App</h1>
       </div>
-      <div>
-        <AverageJourneyTime />
-        <DailyDepartures />
-        <ClassProportion />
-        <FlightsIntoCountry />
+      <div className="card-container">
+        <div className="card">
+          <AverageJourneyTime />
+        </div>
+        <div className="card">
+          <DailyDepartures />
+        </div>
+        <div className="card">
+          <ClassProportion />
+        </div>
+        <div className="card">
+          <FlightsIntoCountry />
+        </div>
       </div>
     </>
   );

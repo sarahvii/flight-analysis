@@ -55,4 +55,4 @@ const FlightsIntoCountry = () => {
 
 export default FlightsIntoCountry;
 
-// todo: convert percentages to percentages of country rather than airport
+// todo: replace hardcoded countries wiht dynamic data
