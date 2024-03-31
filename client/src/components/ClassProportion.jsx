@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { Chart } from "chart.js/auto";
+import { Doughnut } from "react-chartjs-2";
 
 const ClassProportion = () => {
   const [selectedClass, setSelectedClass] = useState("Business");
@@ -7,27 +9,46 @@ const ClassProportion = () => {
     "Business",
     "First",
   ]);
-  const [classProportion, setClassProportion] = useState(null);
+  const [classProportions, setClassProportions] = useState([]);
 
   useEffect(() => {
     fetch(`/api/full-flight-details`)
       .then((response) => response.json())
       .then((data) => {
         const numOfFlights = data.length;
-        const numOfSelectedClassFlights = data.filter(
-          (flight) => flight.outflightclass === selectedClass
-        ).length;
-        // calculate proportion of flights for selected class
-        const proportion = (numOfSelectedClassFlights / numOfFlights) * 100;
-        setClassProportion(proportion.toFixed(2));
+        const proportionsData = flightClassOptions.map((flightClass) => {
+          const count = data.filter(
+            (flight) => flight.outflightclass === flightClass
+          ).length;
+          return ((count / numOfFlights) * 100).toFixed(2);
+        });
+        setClassProportions(proportionsData);
       })
+
       .catch((error) => {
         console.error("Failed to fetch flight data", error);
       });
-  }, [selectedClass]);
+  }, []);
 
   const handleClassChange = (e) => {
     setSelectedClass(e.target.value);
+  };
+
+  const proportionOfSelected = classProportions[flightClassOptions.indexOf(selectedClass)];
+
+  const backgroundColors = flightClassOptions.map((option) =>
+    option === selectedClass ? "#ffa500" : "#9270ff"
+  );
+
+  const data = {
+    labels: flightClassOptions,
+    datasets: [
+      {
+        data: classProportions,
+        backgroundColor: backgroundColors,
+        hoverOffset: 4,
+      },
+    ],
   };
 
   return (
@@ -40,9 +61,12 @@ const ClassProportion = () => {
           </option>
         ))}
       </select>
-      {classProportion !== null ? (
+      <div>
+        <Doughnut data={data} />
+      </div>
+      {classProportions !== null ? (
         <p>
-          {classProportion}% of flights are {selectedClass} class
+          {proportionOfSelected}% of flights are {selectedClass} class
         </p>
       ) : (
         <p>Loading data...</p>
@@ -56,4 +80,3 @@ export default ClassProportion;
 // note: outflightclass only
 // todo: include inbound flights and amend calculation
 // todo: get all classes from db to ensure proportion is correctly calcuated
-// todo: display as appropriate chart - pie chart?
