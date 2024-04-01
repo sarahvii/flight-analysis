@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { Chart } from "chart.js";
+import { Bar } from "react-chartjs-2";
 
 const DailyDepartures = () => {
   const [selectedAirport, setSelectedAirport] = useState("MAN");
@@ -14,7 +16,7 @@ const DailyDepartures = () => {
         // get unique airports from api
         const uniqueAirportsSet = new Set(data.map((flight) => flight.depair));
         setAirports([...uniqueAirportsSet]);
-        filterDeparturesByAirport(selectedAirport, data);
+        // filterDeparturesByAirport(selectedAirport, data);
       })
       .catch((error) => {
         console.error("Failed to fetch flight data", error);
@@ -23,8 +25,8 @@ const DailyDepartures = () => {
 
   // re-fetch data when selected airport changes
   useEffect(() => {
-        filterDeparturesByAirport(selectedAirport);
-      }, [selectedAirport, flightsData]);
+    filterDeparturesByAirport(selectedAirport);
+  }, [selectedAirport, flightsData]);
 
   const filterDeparturesByAirport = (airport) => {
     const departuresFromSelectedAirport = flightsData.filter(
@@ -56,6 +58,25 @@ const DailyDepartures = () => {
     setSelectedAirport(e.target.value);
   };
 
+  const chartData = {
+    labels: Object.keys(departuresByDay),
+    datasets: [
+      {
+        label: `Daily Departures from ${selectedAirport}`,
+        data: Object.values(departuresByDay),
+        backgroundColor: "rgba(53, 162, 235, 0.5)",
+      },
+    ],
+  };
+
+  const chartOptions = {
+    scales: {
+      y: {
+        beginAtZero: true,
+      },
+    },
+  };
+
   return (
     <div>
       <h2>Daily Departures from {selectedAirport}</h2>
@@ -66,13 +87,14 @@ const DailyDepartures = () => {
           </option>
         ))}
       </select>
-      <ul>
+      <Bar data={chartData} options={chartOptions} />
+      {/* <ul>
         {Object.entries(departuresByDay).map(([day, count]) => (
           <li key={day}>
             {day}: {count} flights
           </li>
         ))}
-      </ul>
+      </ul> */}
     </div>
   );
 };
@@ -80,5 +102,8 @@ const DailyDepartures = () => {
 export default DailyDepartures;
 
 // note: outgoing departures only
+// note: considers all data across all time periods
+// todo: breakdown by week or year?
 // todo: any libraries to improve display of data?
 // todo: make dropdown a reusable component?
+// todo: add name of airport

@@ -40,7 +40,7 @@ const ClassProportion = () => {
     option === selectedClass ? "#ffa500" : "#9270ff"
   );
 
-  const data = {
+  const chartData = {
     labels: flightClassOptions,
     datasets: [
       {
@@ -62,7 +62,7 @@ const ClassProportion = () => {
         ))}
       </select>
       <div>
-        <Doughnut data={data} />
+        <Doughnut data={chartData} />
       </div>
       {classProportions !== null ? (
         <p>
