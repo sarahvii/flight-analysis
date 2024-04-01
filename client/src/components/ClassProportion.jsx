@@ -4,37 +4,38 @@ import { Doughnut } from "react-chartjs-2";
 
 const ClassProportion = () => {
   const [selectedClass, setSelectedClass] = useState("Business");
-  const [flightClassOptions, setFlightClassOptions] = useState([
-    "Economy",
-    "Business",
-    "First",
-  ]);
+  const [flightClassOptions, setFlightClassOptions] = useState([]);
   const [classProportions, setClassProportions] = useState([]);
 
   useEffect(() => {
     fetch(`/api/full-flight-details`)
       .then((response) => response.json())
       .then((data) => {
-        const numOfFlights = data.length;
-        const proportionsData = flightClassOptions.map((flightClass) => {
-          const count = data.filter(
-            (flight) => flight.outflightclass === flightClass
-          ).length;
-          return ((count / numOfFlights) * 100).toFixed(2);
-        });
-        setClassProportions(proportionsData);
-      })
+        // get unique flight classes from data
+        const classesSet = new Set(data.map((flight) => flight.outflightclass));
+        const uniqueClasses = Array.from(classesSet).filter(Boolean);
+        setFlightClassOptions(uniqueClasses);
 
-      .catch((error) => {
-        console.error("Failed to fetch flight data", error);
+        // calculate proportions for each class
+        const totalCount = data.length;
+        const proportions = uniqueClasses.map(flightClass => {
+        const count = data.filter(flight => flight.outflightclass === flightClass).length;
+        return ((count / totalCount) * 100).toFixed(2);
+        });
+                
+        setClassProportions(proportions)
+    })
+    .catch((error) => {
+    console.error("Failed to fetch flight data", error);
       });
-  }, []);
+  }, [selectedClass]);
 
   const handleClassChange = (e) => {
     setSelectedClass(e.target.value);
   };
 
-  const proportionOfSelected = classProportions[flightClassOptions.indexOf(selectedClass)];
+  const proportionOfSelected =
+    classProportions[flightClassOptions.indexOf(selectedClass)];
 
   const backgroundColors = flightClassOptions.map((option) =>
     option === selectedClass ? "#ffa500" : "#9270ff"
@@ -47,6 +48,7 @@ const ClassProportion = () => {
         data: classProportions,
         backgroundColor: backgroundColors,
         hoverOffset: 4,
+        spacing: 2,
       },
     ],
   };
@@ -79,4 +81,4 @@ export default ClassProportion;
 
 // note: outflightclass only
 // todo: include inbound flights and amend calculation
-// todo: get all classes from db to ensure proportion is correctly calcuated
+// todo: fix issue with duplicate classes

@@ -16,7 +16,6 @@ const DailyDepartures = () => {
         // get unique airports from api
         const uniqueAirportsSet = new Set(data.map((flight) => flight.depair));
         setAirports([...uniqueAirportsSet]);
-        // filterDeparturesByAirport(selectedAirport, data);
       })
       .catch((error) => {
         console.error("Failed to fetch flight data", error);
@@ -64,7 +63,8 @@ const DailyDepartures = () => {
       {
         label: `Daily Departures from ${selectedAirport}`,
         data: Object.values(departuresByDay),
-        backgroundColor: "rgba(53, 162, 235, 0.5)",
+        backgroundColor: "#9270ff",
+        hoverBackgroundColor: "#ffa500",
       },
     ],
   };
@@ -88,22 +88,16 @@ const DailyDepartures = () => {
         ))}
       </select>
       <Bar data={chartData} options={chartOptions} />
-      {/* <ul>
-        {Object.entries(departuresByDay).map(([day, count]) => (
-          <li key={day}>
-            {day}: {count} flights
-          </li>
-        ))}
-      </ul> */}
     </div>
   );
 };
 
 export default DailyDepartures;
 
-// note: outgoing departures only
+// note: depair used - outgoing departures only
 // note: considers all data across all time periods
 // todo: breakdown by week or year?
 // todo: any libraries to improve display of data?
 // todo: make dropdown a reusable component?
 // todo: add name of airport
+// todo: highlight busiest day
