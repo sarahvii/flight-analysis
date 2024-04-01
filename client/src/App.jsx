@@ -3,6 +3,7 @@ import AverageJourneyTime from "./components/AverageJourneyTime";
 import ClassProportion from "./components/ClassProportion";
 import DailyDepartures from "./components/DailyDepartures";
 import FlightsIntoCountry from "./components/FlightsIntoCountry";
+import RoutesViaAirport from "./components/RoutesViaAirport";
 
 function App() {
   return (
@@ -22,6 +23,9 @@ function App() {
         </div>
         <div className="card">
           <FlightsIntoCountry />
+        </div>
+        <div className="card">
+          <RoutesViaAirport />
         </div>
       </div>
     </>

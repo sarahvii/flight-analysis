@@ -73,7 +73,7 @@ const AverageJourneyTime = () => {
 
 export default AverageJourneyTime;
 
-
+// note: current calculations do not take timezones into account so are incorrect
 // todo: update relevant flights to include: incoming flights & segments which include relevant flights
 // todo: change search bar to dropdown list?
-// todo: offset timezones
+// todo: offset timezones - use air-codes to get city from airport, city-timezone to get timezone from city, and date-fns-tz to convert to UTC.
