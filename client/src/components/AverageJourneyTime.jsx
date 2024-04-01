@@ -13,18 +13,22 @@ const AverageJourneyTime = () => {
       .then((data) => {
         // filter data to return relevant flights
         const relevantFlights = data.filter(
-          (flight) => flight.depair === journeyDeparture && flight.destair === journeyDestination
+          (flight) =>
+            (flight.depair === journeyDeparture &&
+              flight.destair === journeyDestination) ||
+            (flight.depair === journeyDestination &&
+              flight.destair === journeyDeparture)
         );
-        // use reduce function to calculate the flight time of each relevant flight & store as total
+        // use reduce function to calculate flight time of each relevant flight and store as total
         const totalJourneyTime = relevantFlights.reduce((acc, flight) => {
-          const departureDateTime = `${flight.outdepartdate}T${flight.outdeparttime}`;
-          const arrivalDateTime = `${flight.outarrivaldate}T${flight.outarrivaltime}`;
-          console.log(
-            "Departure:",
-            departureDateTime,
-            "Arrival:",
-            arrivalDateTime
-          );
+          const departureDateTime =
+            flight.depair === journeyDeparture
+              ? `${flight.outdepartdate}T${flight.outdeparttime}`
+              : `${flight.indepartdate}T${flight.indeparttime}`;
+          const arrivalDateTime =
+            flight.depair === journeyDeparture
+              ? `${flight.outarrivaldate}T${flight.outarrivaltime}`
+              : `${flight.inarrivaldate}T${flight.inarrivaltime}`;
 
           const departure = new Date(departureDateTime);
           const arrival = new Date(arrivalDateTime);
@@ -32,7 +36,9 @@ const AverageJourneyTime = () => {
         }, 0);
 
         // calculate the average and set in state
-        const average = totalJourneyTime / relevantFlights.length;
+        const average = relevantFlights.length
+          ? totalJourneyTime / relevantFlights.length
+          : 0;
         console.log("Average journey time:", average);
         setAverageTime(average);
       })
@@ -47,29 +53,27 @@ const AverageJourneyTime = () => {
         <input
           type="text"
           value={journeyDeparture}
-          onChange={(e) => setJourneyDeparture(e.target.value)}
+          onChange={(e) => setJourneyDeparture(e.target.value.toUpperCase())}
           placeholder="LHR"
           required
         />
         <input
           type="text"
           value={journeyDestination}
-          onChange={(e) => setJourneyDestination(e.target.value)}
+          onChange={(e) => setJourneyDestination(e.target.value.toUpperCase())}
           placeholder="DXB"
           required
         />
         <button type="submit">Calculate</button>
       </form>
-      <p>
-        {averageTime ? `${averageTime.toFixed(2)} hours` : ""}
-      </p>
+      <p>{averageTime ? `${averageTime.toFixed(2)} hours` : ""}</p>
     </div>
   );
 };
 
 export default AverageJourneyTime;
 
-// note: outgoing journeys only
+
 // todo: update relevant flights to include: incoming flights & segments which include relevant flights
 // todo: change search bar to dropdown list?
 // todo: offset timezones

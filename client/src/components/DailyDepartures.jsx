@@ -98,7 +98,7 @@ export default DailyDepartures;
 // note: depair used - outgoing departures only
 // note: considers all data across all time periods
 // todo: breakdown by week or year?
-// todo: any libraries to improve display of data?
 // todo: make dropdown a reusable component?
 // todo: add name of airport
 // todo: highlight busiest day
+// todo: if item has segments, use depcode, else use depair
