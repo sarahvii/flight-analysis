@@ -9,7 +9,7 @@ function App() {
   return (
     <>
       <div className="header">
-        <h1>Travel App</h1>
+        <h1>Flight Data Analytics</h1>
       </div>
       <div className="card-container">
         <div className="card">
