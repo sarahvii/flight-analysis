@@ -32,7 +32,20 @@ const AverageJourneyTime = () => {
 
           const departure = new Date(departureDateTime);
           const arrival = new Date(arrivalDateTime);
-          return acc + (arrival - departure) / 3600000;
+          let journeyTime = (arrival - departure) / 3600000;
+
+          // For LHR departure and DXB destination ONLY
+          if ((journeyDeparture === "LHR" && journeyDestination === "DXB") ||
+              (journeyDeparture === "DXB" && journeyDestination === "LHR")) {
+            const timezoneDifference = 4;
+            if (journeyDeparture === "LHR") {
+              journeyTime -= timezoneDifference;
+            } else {
+              journeyTime += timezoneDifference;
+            }
+          }
+
+          return acc + journeyTime;
         }, 0);
 
         // calculate the average and set in state
@@ -73,7 +86,7 @@ const AverageJourneyTime = () => {
 
 export default AverageJourneyTime;
 
-// note: current calculations do not take timezones into account so are incorrect
+// note: current calculations do not take timezones into account so are incorrect for all routes other than LHR to DXB
 // todo: update relevant flights to include: incoming flights & segments which include relevant flights
 // todo: change search bar to dropdown list?
-// todo: offset timezones - use air-codes to get city from airport, city-timezone to get timezone from city, and date-fns-tz to convert to UTC.
+// todo: offset timezones - use air-codes to get city from airport, city-timezone to get timezone from city, and date-fns-tz to convert to UTC?
