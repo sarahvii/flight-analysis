@@ -57,6 +57,7 @@ const DailyDepartures = () => {
     setSelectedAirport(e.target.value);
   };
 
+  // for chart
   const chartData = {
     labels: Object.keys(departuresByDay),
     datasets: [

@@ -12,31 +12,37 @@ const ClassProportion = () => {
       .then((response) => response.json())
       .then((data) => {
         // get unique flight classes from data
-        const classesSet = new Set(data.map((flight) => flight.outflightclass));
-        const uniqueClasses = Array.from(classesSet).filter(Boolean);
+        const outClasses = data.map((flight) => flight.outflightclass);
+        const inClasses = data.map((flight) => flight.inflightclass);
+        const combinedClasses = [...outClasses, ...inClasses].filter(Boolean);
+        const uniqueClasses = Array.from(new Set(combinedClasses));
         setFlightClassOptions(uniqueClasses);
 
         // calculate proportions for each class
-        const totalCount = data.length;
-        const proportions = uniqueClasses.map(flightClass => {
-        const count = data.filter(flight => flight.outflightclass === flightClass).length;
-        return ((count / totalCount) * 100).toFixed(2);
+        const totalCount = combinedClasses.length;
+        const proportions = uniqueClasses.map((flightClass) => {
+          const count = combinedClasses.filter(
+            (classType) => classType === flightClass
+          ).length;
+          return ((count / totalCount) * 100).toFixed(2);
         });
-                
-        setClassProportions(proportions)
-    })
-    .catch((error) => {
-    console.error("Failed to fetch flight data", error);
+
+        setClassProportions(proportions);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch flight data", error);
       });
-  }, [selectedClass]);
+  }, []);
 
   const handleClassChange = (e) => {
     setSelectedClass(e.target.value);
   };
 
+  // for display
   const proportionOfSelected =
     classProportions[flightClassOptions.indexOf(selectedClass)];
 
+  // for chart
   const backgroundColors = flightClassOptions.map((option) =>
     option === selectedClass ? "#ffa500" : "#9270ff"
   );
@@ -79,6 +85,5 @@ const ClassProportion = () => {
 
 export default ClassProportion;
 
-// note: outflightclass only
-// todo: include inbound flights and amend calculation
+// todo: tests to check data is combined and calculations are correct
 // todo: fix issue with duplicate classes
